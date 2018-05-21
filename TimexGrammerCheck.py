@@ -156,9 +156,12 @@ if __name__ == '__main__':
     except Exception:
         print ("unknown exception, something wrong")
     finally:
-
-        queryFile.close()
-        intFile.close()
-        prodFile.close()
-        diffFile.close()
+        if queryFile is not None:
+            queryFile.close()
+        if intFile is not None:
+            intFile.close()
+        if prodFile is not None:
+            prodFile.close()
+        if diffFile is not None:
+            diffFile.close()
 
