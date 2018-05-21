@@ -7,6 +7,9 @@ import math
 
 import xml.etree.cElementTree as ET
 
+
+import sys
+
 #from numpy import array
 
 
@@ -44,7 +47,12 @@ class TimexGrammerCheck:
 if __name__ == '__main__':
         
     
-    print ('test')
+    print ('executing...')
+    # queryfile
+    queryFileName = None
+    intFileName = None
+    prodFileName = None
+    diffFileName = None
     queryFile = None
     intFile = None
     prodFile = None
@@ -54,18 +62,48 @@ if __name__ == '__main__':
     endTag = "</TIMEX3>"
 
     try:
+        total = len(sys.argv)
+        # https://www.cyberciti.biz/faq/python-command-line-arguments-argv-example/
+        # argument list examples
+        # -q ..\\reminder-training-45K.tsv  -i ..\\int\\reminder-training-45K.Generated.tsv -p ..\\prod\\reminder-training-45K.Generated.tsv -o ..\\diff.tsv
+        argLen = len(sys.argv)
+        # skip the executive file
+        i = 1
+        while i < argLen:
+            if (sys.argv[i] == "-q" and i+1 < argLen):
+                queryFileName = sys.argv[i+1]
+                i = i+2
+            elif (sys.argv[i] == "-i" and i+1 < argLen):
+                intFileName = sys.argv[i+1]
+                i = i+2
+            elif (sys.argv[i] == "-p" and i+1 < argLen):
+                prodFileName = sys.argv[i+1]
+                i = i+2
+            elif (sys.argv[i] == "-o" and i+1 < argLen):
+                diffFileName = sys.argv[i+1]
+                i = i+2
+            else:
+                i = i+1
 
-        # queryfile
+        # input file example
+        #queryFile = open("..\\reminder-training-45K.tsv", "r")
+        #intFile = open("..\\int\\reminder-training-45K.Generated.tsv", "r")
+        #prodFile = open("..\\prod\\reminder-training-45K.Generated.tsv", "r")
+        # outfile example 
+        #diffFile = open("..\\diff.tsv", "w")
+        if queryFileName is None:
+            raise ValueError("miss -q queryFileName")
+        if intFileName is None:
+            raise ValueError("miss -i intFileName")
+        if prodFileName is None:
+            raise ValueError("miss -d prodFileName")
+        if diffFileName is None:
+            raise ValueError("miss -o diffFileName")
 
-        # change two input file here
-
-        queryFile = open("..\\reminder-training-45K.tsv", "r")
-
-        intFile = open("..\\int\\reminder-training-45K.Generated.tsv", "r")
-        prodFile = open("..\\prod\\reminder-training-45K.Generated.tsv", "r")
-
-        # assign outfile name you want
-        diffFile = open("..\\diff.tsv", "w")
+        queryFile = open(queryFileName, "r")
+        intFile = open(intFileName, "r")
+        prodFile = open(prodFileName, "r")
+        diffFile = open(diffFileName, "w")
 
         index = 1;
         for line1, line2, line3 in zip(intFile, prodFile, queryFile):
@@ -113,7 +151,9 @@ if __name__ == '__main__':
             #print("int = %s, prod = %s" % \
             #(line1, line2))
 
-    except:
+    except ValueError as excep:
+        print ("input argument in valid: %s" % (excep))
+    except Exception:
         print ("unknown exception, something wrong")
     finally:
 
