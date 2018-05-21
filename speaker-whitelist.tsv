@@ -1,0 +1,374 @@
+////0507 modfiidcaiton by gilad, checkedin 
+1	Can you remind Allen to take the chicken out of the freezer?
+1	Remind daddy to wake up in the morning if it's been crying the second.
+1	Remind Justin to fix this bar tonight.
+1	Remind mom leave her keys.
+1	Remind Robert to tidy up the bedroom at 12 o'clock AM 12:00:00PM never mind.
+1	Remind bob to take the beer downstairs.
+1	Remind Matthew to get ready for bed at 7:45.
+1	Remind Chris to read his messages.
+1	Remind Dorothy to call Kim after dinner.
+1	Remind stacey to pick up the dog poop once a week.
+1	Set a reminder for 10 AM tomorrow for Cindy to set a dermatologist appointment.
+1	Set a reminder for 6 PM today for Anna to color.
+1	Remind Noah to start studying tomorrow at 9 AM.
+1	Set a reminder for 45 minutes for Eli to get off the computer.
+1	Remind my wife in 5 minutes to take your clothes off.
+1	Please remind aestrid to take her medicine tomorrow at 6 PM.
+1	Remind Michael to take his medication everyday at 7 AM and 5 PM.
+1	Remind Lauren about her final exam at 10:30.
+1	Remind Adrian to take his pills every 8 hours.
+1	Remind friend to get prayer every thursday night.
+1	Remind Harry to take his medicines at 8 PM tonight.
+////0511 bucket 1 and bucket 2 i tell gilad, checkedin
+1	Tomorrow morning remind me to take out the trash.
+1	Tomorrow when I get to work remind me to order backup battery for next Gen.
+1	Tomorrow at 7:20 AM remind me to leave the house.
+1	Tomorrow at 1 PM remind me to call it at the front office.
+1	Tomorrow morning at 9 o'clock remind me to meet Lori.
+1	Tomorrow morning remind me to call Linda.
+1	Tomorrow morning at 6:15 AM can you remind me to get my laptop in my salad out of the refrigerator.
+1	Tomorrow at 6 PM remind me to craft an epic shotgun an epic pistol.
+1	In 30 minutes remind me to check the washing machine.
+1	In 2 minutes can you remind me that my wife loves me.
+1	In 20 minutes remind me to check the sauce.
+1	In 25 minutes remind me to add wine to the chili.
+1	In 27 minutes remind me to get the clothes out.
+//// 0511 potential judge error
+// all next week should be start time
+1	Reind me to get dog food every morning at 10 o'clock all next week.
+// should be 11 instead of 11 o'clock
+1	Set up a reminder to meet with Mike tomorrow at 11 o'clock in Detroit.
+// judge should tag text , start time and start date according to out result
+1	Remind me to write a check for Calvin on Sunday morning at 8:30.
+// next year should be start date
+1	Next year remind me that I need to poop.
+// every day should be start date
+1	Remind me to clean house everyday at 4.
+// every thursday should be start date
+1	Remind me cat has class every Thursday 4 PM.
+// Pete should be contact name target. also, judge should have reminder_text 
+1	Remind Pete to clean house tomorrow.
+// astricta is not a perosn' name in english
+1	Can you please remind astricta take her medicine at 6 PM tomorrow?
+// tuesday and thursday should be combined
+1	Remind me every Tuesday and Thursday at 8:45 AM.
+// judge tags nothing but i think we are correct
+1	Will you remind me every morning at 9 o'clock to take my deal pill?
+// in our hour should be start time
+1	In one hour remind me we have to go get some blueberries for Michael.
+// judge tags nothing but we are correct, evn though it is unclear query
+1	Remind me tomorrow at 4 PM to do a current event.
+// judge tags nothing
+1	Remind me to take a walk at 10:30 AM.
+// judge does not tag after work as part of reminder text but i think it should be part of
+1	Remind me to move Shelly after work.
+// happening twice, one time is error but one time is correct
+1	Remind me to pick up the laundry in one hour.
+// an hour should be start time, judge tags as move_later_time, not support schema, but it is ambiguous
+1	Postpone the reminder for an hour.
+// judge should tag 3:28 as start time
+1	Remind me to get 3 jump like jumping jacks at 3:28.
+// on the second is the current month 2, unlcear skill says it can be suppored then it has no meaning
+// judge should tag on the second as start time
+1	Can you remind me for 3 car payment on the second?
+// 0511 my potential fixed, not yet check in 
+2	Can you erase all the reminders which I have set for you?
+2	Delete all my reminders.
+2	Remove all reminders.
+2	Delete all reminder.
+2	What's my next reminder?
+2	When is my next reminder?
+2	When's my next reminder?
+2	What was my last reminder?
+// upcoming should be orderref i think. so also judge annotation issue
+2	What are my upcoming reminders?
+// reminder_text(pill) => contact_name_target (pill)
+// contact name is controlled by lexicon so pill will be filtered
+// open txt might solve it by adding pattern
+// addiong a new  pattern only it might work
+// <needed> BEGIN REMIND-REMINDER-SELF Property(Subject) (Property(StartTime)|Property(StartDate)) END	BEGIN REMIND-REMINDER-SELF Property(Subject) (Property(StartTime)|Property(StartDate)) END	CreateSingleReminder	0	TRUE	1/1/0001 12:00:00 AM		1		
+// <needed> REMIND-REMINDER-SELF	REMIND-REMINDER-SELF	0	True	1/1/0001 12:00:00 AM		1
+2	Create a reminder for pill in 30 minutes.
+// reminder_text(leave) => untagged
+// open txt might solve it by adding pattern
+// if using pattern only it might work, future explore
+// <needed>  BEGIN REMIND-REMINDER-SELF TO-REMINDER.(LEFTMOST) Property(Subject) (Property(StartTime)|Property(StartDate)) END	BEGIN REMIND-REMINDER-SELF TO-REMINDER.(LEFTMOST) Property(Subject) (Property(StartTime)|Property(StartDate)) END	CreateSingleReminder	0	TRUE	1/1/0001 12:00:00 AM		1		
+// <needed> REMIND-REMINDER-SELF	REMIND-REMINDER-SELF	0	True	1/1/0001 12:00:00 AM		1
+// ?? but why 4 is not propagated by start time from lu. need to ask
+2	Set a reminder time to leave at 4 o'clock.
+// untagged => o'clock(TargetContact). cannot solve
+// open txt might solve it by adding pattern. also contact name is controlled by lexicon only
+// if using pattern only it might work, future explore
+// <needed> BEGIN REMIND-REMINDER (Property(StartTime)|Property(StartDate)) TO-REMINDER.(LEFTMOST) Property(Subject) END	BEGIN REMIND-REMINDER (Property(StartTime)|Property(StartDate)) TO-REMINDER.(LEFTMOST) Property(Subject) END	CreateSingleReminder	0	TRUE	1/1/0001 12:00:00 AM		1		
+2	Set a reminder for 7 o'clock to check the meatballs.
+// ?? should judge tag 'the girls to get off the computer' . let say if judge does not need to take
+// also ambiguous unless it is multi turn
+// 1> let say if judge does not need to tag the girls to get off the computer
+// untagged (the girls to get off the computer) => reminder_text(get off the computer)  contact_name(girls)
+// in luna contact name controlled by lexicon already so girls will not being tagged
+// but if introducing reminder_text from lu tagger then wrong reminder texxt
+// 2> if judge is correct
+// in luna contact name controlled by lexicon already so girls will not being tagged + reminder intent then this query is solvable
+2	Remind the girls to get off the computer at 6:30.
+////0511 possible cu solve need to confirm with list, double start date or start time
+3	Remind me tomorrow at 10 AM to call the dentist and schedule an appointment within one week.
+3	Remind me in 15 minutes to call at 7 appointment.
+3	Remind me on February 8th that cals going on a field trip on February 9th and we need to pack a lunch.
+// this query happens twice but the first one's originla query is differenct. "Remind me cat has class every Thursday 4 PM."    
+3	Remind me at 6:45 PM tonight to tell my mom if I can use your camera at the last event.
+// second 12 already start_time can be ignore ? cannot be found in pi result, weird
+3	Remind me tomorrow morning at 8 o'clock I have a meeting with bob night at 12.
+// second star time can be remove
+3	Set a daily reminder at 7:30 PM to play guitar for a half hour.
+// having start time or start date, then no need implict location. ? cannot be found in pi result, weird
+3	Set a reminder for 9 AM Friday for image of celebration at the school.
+// for tuesday should not be start date , no doulbe start date probably cannot solve 
+3	Remind me at 1:29 to book a court for Tuesday.
+////0511 ambiguous queries
+// discuss with Max
+// but this can add a pattern to support
+// Property(Subject) REMIND-REMINDER ME END 
+// becasue opentext will do post processing like eliminate rules by postTagger
+// unless enough inofrmation to convince cu to make a change then this can not be resolved
+//  but it becomes I love my baby(reminder text) => love my baby(reminder text)
+4	I love my baby remind me.
+// discuss with max 
+// confirmed it is speech issue
+4	Start Porch add a reminder weekend construction shut down the road 7.
+// discuss with max 
+// untagged (second remind) => TargetContact(second remind)
+// confirmed in speech , the guys just pauses for a while. probably no need to fix
+4	Remind remind me to take the fish out at 7:00:00AM.
+// discuss with max 
+// reminder_text(appointmnent) => reminder_text(i have a appointment)
+// even though using open text i think it cannot be solved
+// with you should be would you
+// confimred in speech issues
+4	On Friday February 2nd at 12 o'clock I have an appointment with you remind me please.
+// bad query
+4	I'm remind me to jump up and stand in line water White House always present apparently contradictory statements about the Spartan program will come that much more.
+// speech problem
+4	Remind me tomorrow morning at 81515 to take the car in.
+// speech problem / bad query dut to ambiguous
+4	Remind mouse to put that up at.
+// feature improvement if multi term, ambiguous
+4	David reminder at 7 PM.
+// ambiguous
+4	When does set my last reminder?
+// ambiguous/ 
+4	Remind me laundry in 2 or remind Hillary in an hour and a half to turn the smoker to 325.
+// to you is ambiguous
+4	Remind me to buy Harley talk to you tomorrow.
+// ambiguous/ 
+4	How much time is left on my reminder?
+// after washing machine should be part of reminder_text . in 40 minutes should be start time
+4	Remind me to take off my clothes after washing machine in 40 minutes.
+// ambiguous/ 
+4	Remind me to tell if you already have Cortana set list.
+// to 5:25 wrong representation, ambiguous/ 
+4	Remind me to go to Jesse and Frank asch to 5:25.
+// ouf ot 5 unclear,ambiguous or speech 
+4	Remind me to take the garbage out of 5.
+// of the little non clear => litter, speech problem
+4	Remind me of the little after 5 minutes.
+// not not unclear, ambiguous
+4	Remind me to not make reminders for when I'm not at home at 8:30 PM.
+// set to tell not clear 10 => someone, speech 
+4	Remind me set to tell 10 to bring up the banana today at 6 PM.
+// unclear, ambiguous
+4	How do you have stuff on top of that thing and it's cooking things remind me to clock out of work in 4 hours?
+// but i looked at is unclear, ambiguous
+4	Set a reminder for the 31st but I looked at.
+// main should be me 
+// from data set hey cortana remind me to pay audrey jean and the park fee tomorrow at eleven am
+// this should be speaker issue so thos should be unsolved
+4	Remind main to pay Audrey Jean in the park fee tomorrow at 11 AM.
+// untagged (Maine) => contact_name(Maine)
+// if overriding using absolute_location by lexicon then it will still fail here
+// confirmed in speech this should be speech issues
+4	Remind Maine Sunday morning at 10 AM to check into my Southwest Airlines flight.
+// absolute location(Maine) => contact name(Maine)
+// use equlspan to override contact name when it is absolute location
+// confirmed in speech it should be me
+4	Give me reminders for Maine.
+// untagged => contact name(Maine), also ambiguous
+// confirmed in speech it should be speech issue
+4	Remind Maine.
+// absolute location(Maine) => remainder text
+// map reminder text to subject
+// use equlspan to override remainder text when it is absolute location
+// confirmed in speech it should be speech issue
+4	Do you have any reminders for Maine?
+// untagged => reminder text(40%), also amgibuous
+// if introducing reminder text then this can not be solved
+// speech issue it should be 'hey cortana set bedroom light to forty percent'
+4	Set a reminder 40%.
+// reminder text(I got) => untagged, also ambiguous
+// confirmed in speech it has issues
+4	Set my reminder that I got.
+//  i think mark is Mark
+//  if chaning to Mark,  contact name is possilbe to be makred correct by LU
+// from Luna, hit team.ADD.  need to change teamSpace.pattern and using other tag to tag reminder_text
+4	Make a reminder to have mark set you up to Wi-Fi.
+// S Patricia(reminder text) => Patricia (contact name). not sure which way is correct
+// confirmed it is speech issue it should be 'hey cortana remind me in one minute ask patricia'    
+4	Remind me in one minute S Patricia.
+// remind after is confused
+// untagged(after) => contact_name(after)
+// confirmed it is speech issue
+4	Remind after to book train tickets tomorrow 8 AM.
+// using existing  pattern + openText tag then it is solved
+// BEGIN REMIND-REMINDER Property(TargetContact)
+// glennan(contact_name)  => glennan(implict location)
+// confirmed originla text is lenette so speech issue. no sample to listen. probably cannot solve. go to category 
+4	Set a reminder for tomorrow at 11 AM for glennan to call her neurologist.
+////0511 probaly cannot sove 
+// ?? judge issue, Marshall should be contact name i think
+// reminder_text(Marshall needs to call the Acura dealer) => [{"contact_name_target":"Marshall"}],[{"reminder_text":"call the Acura dealer"}]]
+5	In 12 hours remind us that Marshall needs to call the Acura dealer.
+// ambiguous becaue of before I
+// start_time(in 10 minutes) => start_time(in 10 minutes before I)  
+5	Remind me to pick up the laundry in 10 minutes before I.
+// open text tagger might help the two with exisitng pattern
+// BEGIN REMIND-REMOINDER (me|us) Property(Subject) END
+// reminder_text(trash) => untagged
+//  why not pick up opentext becaause lu tags '10:30 trash' the whole as start time
+// ?? might be add a rule to check if starting with 10:30 with only two words
+5	Remind me at 10:30 trash.
+// reminder_text(lotion) => untagged
+5	Remind me at 11:30 lotion.
+// start_date(January 27th) reminder_text(install day) => start_date (January 27th install day)
+// this cannot solve
+5	Remind me January 27th install day.
+// January (start_date) 19:16 (start_time) => January (start_date) 
+// cannot solve
+5	Remind me dinner January 19:16.
+// reminder_text (take my protein drink with me) => reminder_text(take my protein drink)
+// BEGIN REMIND-REMOINDER (me|us) Property(Subject) END
+// openText might help by adding patterns
+// 'take my protein drink' is covered by calendar event
+// ?? why openText does not pick up in this pattern
+5	Remind me to take my protein drink with me at 9.
+// bug 
+// https://msasg.visualstudio.com/Bing_Cortana/_workitems/edit/1189100
+5	Move my reminders for today to the same times tomorrow.
+//  untagged => reminder_text(set a timer)
+// also double reminder text
+//  ?? 1> igonre reminder text wtih 'set a timer' when starting with might help
+// 2> make 'set a timer' as polite word
+// but  pick to take Josh to work is ambiguous (speech is correct)
+5	Set a timer for 3 PM today to remind me to pick to take Josh to work.
+5	Set a timer for one hour reminder to turn off heater in bathroom.
+// reminder_text (re write my English essay about trump Secretary of State) => reminder_text(trump Secretary of State)
+// no video speech to confirm
+// 1> if  introducing  reminder text from lut then this will break
+// 2> if using pattern only it might work, future explore
+// BEGIN REMIND-REMOINDER (me|us) Property(Subject) END
+5	Remind me to re write my English essay about trump Secretary of State at 7 AM.
+// reminder_text (I have brunch) => reminder_text(brunch)
+// but remind me that lu most of them are correct, only one wrong. leave for future
+5	Remind me that I have brunch tomorrow at 11 at cafe Antigua.
+// reminder_text (print out reports for Ralph McDonald) => reminder_text(print out reports for Ralph McDonald before meeting)
+// open txt might solve it by adding pattern
+// 1> if  introducing  reminder text from lut then this will break
+// 2> if using pattern only it might work, future explore
+// BEGIN REMIND-REMOINDER (me|us) Property(Subject) END
+5	Remind me to print out reports for Ralph McDonald before meeting on Monday at 11 AM.
+// in 15 minutes after they've to work (start_time) => in 15 minutes after they've (start time)  work(implict location)
+// probaly cannot solve
+5	Remind me in 15 minutes after they've to work.
+// untagged => tag 5:45 as reminder text
+// if introducing reminder text unless you can use nothing to override existing tagger 
+// otherwise it cannot be resolved
+// ?? discuss with cu team 
+5	Reminder 5:45 tomorrow pick up bagels.
+// reminder text(8745) => start time, also ambiguous
+// unless using  opentxt trying to solve it
+5	Turn off my reminder for 8745.
+// reminder text(cornbread) => start date(cornbread)
+// ?? might be using opentext to solve but it has no much sense
+5	Cancel the reminder on cornbread.
+// reminder text(don't let me down) => untagged, also ambiguous
+5	Remind don't let me down.
+// start_date(last night) => reminder_text(far from last night)
+5	Remind far from last night.
+// reminde_text(leave) to reminde_text(that i have to leave)
+// if introducing reminde_text from lu then this still fail
+5	Remind me at 5 that I have to leave.
+// reminder text(start your homework) to reminde_text(saying start your homework)
+// if introducing reminde_text from lu then this still fail
+5	Set a reminder for 4 o'clock saying start your homework.
+// nob Hill (absolute location) => implicit location . personally think judge is correct
+// add lexicon and use tag filter should help
+// this can wait lu intent proprates, add reminder_text external tagger propagating all tags and use tagFilter then it can be fixed
+// if not wait for lu intent to proprate, you need to have apttern to do 
+// npb hill is in north calfironia, if not right then this is judge issue
+5	Remind me to buy Dre know the next time I'm at nob Hill.
+// in 6 days (start time) => in 6 days (start date)
+5	Remind me to cancel Hulu service in 6 days.
+// double start date. tuesday (start date) => taco tuesday (start date)
+5	Remind me on Tuesday at 5:30 at Taco Tuesday.
+// ***** is unclear
+// discuss with max 
+// leave it unsolved by taos   
+5	Remind me tomorrow morning at 9:29 AM to go up to the dog f****** grooming shop.
+// ***** is unclear
+// discuss with max
+// leave it unsolved by taos      
+5	Set a reminder to get off your a** and do laundry at 12 o'clock.
+// reminder_text(what's up) => reminder_text()
+// if able to set what's up or what up for reminder_text that is works. need to ask : Maxim: you can try openText tagger
+// BEGIN REMIND-REMOINDER (me|us) Property(Subject) END
+// becasue opentext will do post processing like eliminate rules by postTagger
+// unless enough inofrmation to convince cu to make a change then this can not be resolved
+// reminder_text (what's up) => reminder_text (what's)
+5	Remind me what's up at 6.
+////0514 wrong intent
+//wrong intent
+6	Tell me on March 1st 2018 happy birthday at 7:15.
+//wrong intent
+6	In an hour laundry is done.
+//wrong intent
+6	Call Allison tomorrow morning.
+//wrong intent
+6	Please remind me Monday at 8:30 about a dentist appointment at 9:30.
+// coverd by teamspace, wrong intent
+6	Add laundry detergent to tomorrow's reminder at 3 o'clock.
+// wrong intent
+6	Go to school tomorrow.
+6	Mezcals lunch tomorrow at 6:00:00AM.
+6	My 2 PM tell me it's time to go to Seattle Times.
+6	Check the laundry in 30 minutes.
+6	Add go bra shopping to my reminders for today.
+//	play me to is unclear, also wrong intent
+6	Play me to buy paper bowls from Costco.
+//	amniguous also wrong intent
+6	Did you forget my reminder for this morning?
+// 	amniguous also wrong intent
+6	Remember that we got more like got some snow and then they said were married at that thing we got like 4 more service.
+// 	amniguous also wrong intent
+6	Reminders list.
+// 	amniguous also wrong intent
+6	Do you want your Cortana reminder yes?
+// 	amniguous also wrong intent
+6	How many minutes are left on the reminder?
+// 	amniguous also wrong intent
+6	Call dad work today.
+//	reminder to shopping list. how come. amniguous also wrong intent
+6	Can you turn my reminders today into a shopping list?
+// meaningless. amniguous also wrong intent
+6	Stop reading reminders.
+// unclear which reminder. amniguous also wrong intent
+6	Cortana please reschedule a reminder for tomorrow at 8 AM.
+// wrong grammar. amniguous also wrong intent
+6	Reminder tomorrow 10 AM call Karen solimando.
+// amniguous also wrong intent
+6	Why didn't you remind me?
+// amniguous also wrong intent
+6	Tree services where is next reminder.
+// amniguous also wrong intent
+6	Reschedule reminder.
+// ?? if makign 'get the salmon out' tagged as reminder context then this might be solvable by adding pattern let me nkow. Maxim: you can try openText tagger
+// also wrong intent
+6	Let me know in 15 minutes to get the salmon out.
