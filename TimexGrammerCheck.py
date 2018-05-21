@@ -62,10 +62,12 @@ if __name__ == '__main__':
     endTag = "</TIMEX3>"
 
     try:
+
+        spanOnly = False
         total = len(sys.argv)
         # https://www.cyberciti.biz/faq/python-command-line-arguments-argv-example/
         # argument list examples
-        # -q ..\\reminder-training-45K.tsv  -i ..\\int\\reminder-training-45K.Generated.tsv -p ..\\prod\\reminder-training-45K.Generated.tsv -o ..\\diff.tsv
+        # -q ..\\reminder-training-45K.tsv  -i ..\\int\\reminder-training-45K.Generated.tsv -p ..\\prod\\reminder-training-45K.Generated.tsv -o ..\\diff.tsv -m span
         argLen = len(sys.argv)
         # skip the executive file
         i = 1
@@ -81,6 +83,9 @@ if __name__ == '__main__':
                 i = i+2
             elif (sys.argv[i] == "-o" and i+1 < argLen):
                 diffFileName = sys.argv[i+1]
+                i = i+2
+            elif (sys.argv[i] == "-m" and i+1 < argLen and sys.argv[i+1] == "span"):
+                spanOnly = True
                 i = i+2
             else:
                 i = i+1
@@ -132,12 +137,17 @@ if __name__ == '__main__':
                     res += "\t"+ ''.join(map(lambda x: (x[0]) ,  line1Timex)) + "\t" + ''.join(map(lambda x: (x[0]) ,  line2Timex));
                 else:
                     for tuple1, tuple2 in zip(line1Timex , line2Timex):
-
-                       # comparing span if they are the same  
-                       #if (tuple1[1].text != tuple2[1].text):
-                       #    res += "\t"+ tuple1[0] + "\t" + tuple2[0];
-                       if (tuple1[0] != tuple2[0]):
-                           res += "\t"+ tuple1[0] + "\t" + tuple2[0];
+                        if (spanOnly):
+                            if (tuple1[1].text != tuple2[1].text):
+                                res += "\t"+ tuple1[0] + "\t" + tuple2[0];
+                        else:
+                            if (tuple1[0] != tuple2[0]):
+                                res += "\t"+ tuple1[0] + "\t" + tuple2[0];
+                        # comparing span if they are the same  
+                        #if (tuple1[1].text != tuple2[1].text):
+                        #    res += "\t"+ tuple1[0] + "\t" + tuple2[0];
+                        #if (tuple1[0] != tuple2[0]):
+                        #    res += "\t"+ tuple1[0] + "\t" + tuple2[0];
 
 
                 #for timex in line1Timex:
