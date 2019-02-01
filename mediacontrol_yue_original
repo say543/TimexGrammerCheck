@@ -1,0 +1,466 @@
+{
+  /** for schema **/
+  "intent_file": "./resource/intents.txt",
+  "slot_file": "./resource/slots.txt",
+
+  /** for statistic model **/
+  /*"domain_train_data": "./resource/Data/mediacontrol_domain_train.tsv", //"training data"
+  "intent_train_data": "./resource/Data/mediacontrol_intent_train.tsv",
+  "slot_train_data": "./resource/Data/mediacontrol_slot_train.tsv",*/
+  "domain_train_data": "./resource/Data/mediacontrol_domain_train_50000.tsv", //"training data"
+  "intent_train_data": "./resource/Data/mediacontrol_intent_train_50000.tsv",
+  "slot_train_data": "./resource/Data/mediacontrol_slot_train_50000.tsv",
+
+  /** for model lexicon & pcfg **/
+    "domain_lexicons_file": "",
+  "domain_pcfg_lexicons_file": "",
+  "domain_pcfg_grammar_file": "",
+  "intent_lexicons_file": "./resource/LexiconFiles/lexicon.desc.txt",
+  "intent_pcfg_lexicons_file": "./resource/PCFGFiles/mediacontrol.intent.lexicon.desc.txt",
+  "intent_pcfg_grammar_file": "./resource/PCFGFiles/mediacontrol.intent.pcfg.grammar.xml",
+  "slot_lexicons_file": "./resource/LexiconFiles/lexicon.desc.txt",
+  "evaluate_file": "./resource/Data/mediacontrol_test_set.tsv",
+
+  /** for pattern match **/
+  "pattern_lexicon_path": "./resource/lexicon/",
+  "pattern_infile_path": "./resource/infiles/",
+  "pattern_bin_path": "./resource/Pattern/Bins/",
+  "pattern_domain_bin_file": "./resource/Pattern/mediacontrol.domain.pattern.conditions.txt",
+  "pattern_intent_bin_file": "./resource/Pattern/mediacontrol.intent.pattern.conditions.txt",
+  "pattern_slot_bin_file": "./resource/Pattern/mediacontrol.slot.pattern.conditions.txt",
+
+  /** for query match **/
+  "query_domain_file": "./resource/Hotfix/mediacontrol.Domain.Hotfix.Annotation.tsv",
+  "query_intent_file": "./resource/Hotfix/mediacontrol.Intent.Hotfix.Annotation.tsv",
+  "query_slot_file": "./resource/Hotfix/mediacontrol.Slot.Hotfix.Annotation.tsv",
+
+  /** for timex and metadata **/
+  "timex_grammar_file": "./resource/Timex/timex.grammar.xml",
+  "timex_datetime_slot_file": "./resource/Timex/datetime.slots.tsv",
+  "canonical_value_file": "./resource/CanonicalValue/canonical.value.tsv",
+  "canonical_slots_file": "./resource/CanonicalValue/canonical.slots.tsv",
+
+  "common": {
+    "lu_schema": {
+      "domain": "mediacontrol",
+      "intents": {
+        "intent_file": "${intent_file}",
+        "sort": true
+      },
+      "slots": {
+        "sort": true,
+        "slot_file": "${slot_file}"
+      }
+    },
+    "prefix": "luna_${common.lu_schema.domain}_enus_mv1",
+    "preprocess_domain": "mediacontrol",
+    "intent_classes": "${common.prefix}.intents.classes.txt",
+    "slot_entities": "${common.prefix}.slots.config.xml"
+  },
+
+  "preprocess": {
+    "priority": 0,
+    "common": {
+      "preprocess_domain": "${common.preprocess_domain}",
+      "prefix": "luna_${common.preprocess_domain}_enus_mv1"
+    },
+    "use_extended_lu_schema": false,
+    "preprocess_pipeline_prefix": "${preprocess.common.prefix}.preprocess",
+    "pipeline": {
+      "preprocess_fst": {
+        "name": "${preprocess.common.prefix}.preprocess.fst"
+      },
+      "timex_preprocess_fst": {
+        "name": "${preprocess.common.prefix}.timex.preprocess.fst"
+      }
+    },
+    "qas_inputs": {
+      "conditions": [
+        {
+          "feature_name": "ExternalFeatureSet:PreviousTurnDomain",
+          "type": "string"
+        },
+        {
+          "feature_name": "ExternalFeatureSet:PreviousTurnIntent",
+          "type": "string"
+        },
+        {
+          "feature_name": "ExternalFeatureSet:TaskFrameStatus",
+          "type": "string"
+        },
+        {
+          "feature_name": "ExternalFeatureSet:TaskFrameEntityStates",
+          "type": "list"
+        },
+        {
+          "feature_name": "ExternalFeatureSet:TaskFrameName",
+          "type": "string"
+        },
+        {
+          "feature_name": "ExternalFeatureSet:TaskFrameGUID",
+          "type": "string"
+        }
+      ]
+    },
+    "qas_outputs": {
+      "preprocessed_query": "${preprocess.common.prefix}_preprocessed_query",
+      "preprocessed_intertoken": "${preprocess.common.prefix}_preprocessed_intertoken",
+      "preprocessed_lowercase_query": "${preprocess.common.prefix}_preprocessed_lowercase_query",
+      "timex_preprocessed_query": "${preprocess.common.prefix}_timex_prepropcessed_query",
+      "preprocessed_conditions_union": "${preprocess.common.prefix}_preprocessed_conditions_union",
+      "preprocessed_conditions_without_query": "${preprocess.common.prefix}_preprocessed_conditions_without_query"
+    },
+    "scripts": {
+      "build": "preprocess.exe -c %processor_config% -o %final% -t %tmp%"
+    }
+  },
+
+  "data_preprocess": {
+    // this path can related to runtime
+    "preprocess_pipeline": "./preprocess/final/${preprocess.preprocess_pipeline_prefix}.pipeline.txt",
+    "preprocessed_feature": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+    "external_features": "${preprocess.qas_inputs.conditions}",
+    "punctuation_extend": [],
+    "tnitn_extend": false
+  },
+
+  "data_preprocess_aspect": {
+    "scripts": {
+      "build": "data_preprocess.exe -c %build_config% -t %tmp%/preprocess -o %tmp%/preprocess.done",
+      "test": "cd"
+    }
+  },
+
+  "domain_svm": {
+    "priority": 0,
+    "common": "${common}",
+    "data_preprocess": "${data_preprocess}",
+    "use_extended_lu_schema": false,
+    "query_column": "query",
+    "class_column": "domain",
+    "external_feature_column": null,
+    "train_data": [
+      {
+        "file": "${domain_train_data}",
+        "weight": 1
+      }
+    ],
+    "test_data": [
+      {
+        "file": "${domain_train_data}"
+      }
+    ],
+    "lexicon_desc_file": "",
+    "algo": "domain_svm",
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+      "external_feature_sets": [
+        "ExternalFeatureSet:PreviousTurnDomain"
+      ]
+    },
+    "qas_outputs": {
+      "output_score": "${common.prefix}_domain_svm_score"
+    },
+    "scripts": {
+      "build": "maaf_statistic_model.exe -c %processor_config% -t %tmp% -o %final%",
+      "postbuild": "maaf_statistic_model_test.exe -c %processor_config% -m %tmp%/build_tgt/domain -o %tmp%/test"
+    }
+  },
+
+  "domain_pattern_match": {
+    "priority": 0,
+    "common": "${common}",
+    "use_extended_lu_schema": false,
+    "type": "domain",
+    "reference_lexicon_path": "",
+    /*"generate_from_tsv": {
+      "pattern_tsv": "${annotated_domain_pattern_file}"
+    },
+    "compile_from_infile": {
+      "conditions_file": "${pattern_domain_infile_condition_file}",
+      "infile_folder": "${pattern_infile_path}"
+    },*/
+    "copy_from_bin": {
+      "conditions_file": "${pattern_domain_bin_file}",
+      "fst_folder": "${pattern_bin_path}"
+    },
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+      "input_score": "${domain_svm.qas_outputs.output_score}",
+      "condition_feature": "${preprocess.qas_outputs.preprocessed_conditions_union}"
+    },
+    "qas_outputs": {
+      "override_score": "${common.prefix}_domain_pattern_hotifx_score"
+    },
+    "scripts": {
+      "build": "pattern_match.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "domain_exactly_match": {
+    "priority": 0,
+    "common": "${common}",
+    "data_preprocess": "${data_preprocess}",
+    "use_extended_lu_schema": false,
+    "type": "domain",
+    "annotated_query_file": "",
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+      "input_score": "${domain_pattern_match.qas_outputs.override_score}",
+      "condition_feature": "${preprocess.qas_outputs.preprocessed_conditions_without_query}"
+    },
+    "qas_outputs": {
+      "override_score": "${common.prefix}_domain_query_hotifx_score"
+    },
+    "scripts": {
+      "build": "exact_match.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "domain_stub": {
+    "priority": 0,
+    "common": "${common}",
+    "use_extended_lu_schema": false,
+    "type": "domain",
+    "qas_inputs": {
+      "domain_score": "${domain_exactly_match.qas_outputs.override_score}"
+    },
+    "scripts": {
+      "build": "qas_processor.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "intent_svm": {
+    "priority": 0,
+    "common": "${common}",
+    "data_preprocess": "${data_preprocess}",
+    "use_extended_lu_schema": false,
+    "query_column": "query",
+    "class_column": "intent",
+    "train_data": [
+      {
+        "file": "${intent_train_data}",
+        "weight": 1
+      }
+    ],
+    "test_data": [
+      {
+        "file": "${intent_train_data}"
+      }
+    ],
+    "lexicon_desc_file": "${intent_lexicons_file}",
+    "algo": "intent_svm",
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+      "external_feature_sets": [
+        "ExternalFeatureSet:PreviousTurnIntent"
+      ]
+    },
+    "qas_outputs": {
+      "output_score": "${common.prefix}_intent_svm_score"
+    },
+    "scripts": {
+      "build": "maaf_statistic_model.exe -c %processor_config% -t %tmp% -o %final%",
+      "postbuild": "maaf_statistic_model_test.exe -c %processor_config% -m %tmp%/build_tgt/intent -o %tmp%/test"
+    }
+  },
+
+  "intent_pattern_match": {
+    "priority": 0,
+    "common": "${common}",
+    "use_extended_lu_schema": true,
+    "type": "intent",
+    "reference_lexicon_path": "${pattern_lexicon_path}",
+    "copy_from_bin": {
+      "conditions_file": "${pattern_intent_bin_file}",
+      "fst_folder": "${pattern_bin_path}"
+    },
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+      "input_score": "${intent_svm.qas_outputs.output_score}",
+      "condition_feature": "${preprocess.qas_outputs.preprocessed_conditions_union}"
+    },
+    "qas_outputs": {
+      "override_score": "${common.prefix}_intent_pattern_hotfix_score"
+    },
+    "scripts": {
+      "build": "pattern_match.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+
+  },
+
+  "intent_exactly_match": {
+    "priority": 0,
+    "common": "${common}",
+    "data_preprocess": "${data_preprocess}",
+    "use_extended_lu_schema": true,
+    "type": "intent",
+    "annotated_query_file": "",
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+      "input_score": "${intent_pattern_match.qas_outputs.override_score}",
+      "condition_feature": "${preprocess.qas_outputs.preprocessed_conditions_without_query}"
+    },
+    "qas_outputs": {
+      "override_score": "${common.prefix}_intent_query_hotfix_score"
+    },
+    "scripts": {
+      "build": "exact_match.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "intent_stub": {
+    "priority": 0,
+    "common": "${common}",
+    "use_extended_lu_schema": true,
+    "type": "intent",
+    "qas_inputs": {
+      "intent_score": "${intent_exactly_match.qas_outputs.override_score}"
+    },
+    "scripts": {
+      "build": "qas_processor.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "slot_lccrf": {
+    "priority": 0,
+    "common": "${common}",
+    "data_preprocess": "${data_preprocess}",
+    "use_extended_lu_schema": false,
+    "queryxml_column": "QueryXml",
+    "train_data": [
+      {
+        "file": "${slot_train_data}",
+        "weight": 1
+      }
+    ],
+    "test_data": [
+      {
+        "file": "${evaluate_file}"
+      }
+    ],
+    "max_iteration": "200",
+    "lexicon_desc_file": "${slot_lexicons_file}",
+    "algo": "slot_lccrf",
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}"
+    },
+    "qas_outputs": {
+      "output_score": "${common.prefix}_slot_lccrf_tag"
+    },
+    "scripts": {
+      "build": "maaf_statistic_model.exe -c %processor_config% -t %tmp% -o %final%",
+      "postbuild": "maaf_statistic_model_test.exe -c %processor_config% -m %tmp%/build_tgt/slot -o %tmp%/test"
+
+    }
+  },
+
+  "slot_pattern_match": {
+    "priority": 0,
+    "common": "${common}",
+    "use_extended_lu_schema": false,
+    "type": "slot",
+    "reference_lexicon_path": "${pattern_lexicon_path}",
+    /*"generate_from_tsv": {
+      "pattern_tsv": "${annotated_slot_pattern_file}"
+    },
+    "compile_from_infile": {
+      "conditions_file": "${pattern_slot_infile_condition_file}",
+      "infile_folder": "${pattern_infile_path}"
+    },*/
+    "copy_from_bin": {
+      "conditions_file": "${pattern_slot_bin_file}",
+      "fst_folder": "${pattern_bin_path}"
+    },
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+      "input_score": "${slot_lccrf.qas_outputs.output_score}",
+      "condition_feature": "${preprocess.qas_outputs.preprocessed_conditions_union}"
+    },
+    "qas_outputs": {
+      "override_score": "${common.prefix}_slot_pattern_hotfix_score"
+    },
+    "scripts": {
+      "build": "pattern_match.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "slot_exactly_match": {
+    "priority": 0,
+    "common": "${common}",
+    "data_preprocess": "${data_preprocess}",
+    "use_extended_lu_schema": false,
+    "type": "slot",
+    "annotated_query_file": "",
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_lowercase_query}",
+      "input_score": "${slot_pattern_match.qas_outputs.override_score}",
+      "condition_feature": "${preprocess.qas_outputs.preprocessed_conditions_without_query}"
+    },
+    "qas_outputs": {
+      "override_score": "${common.prefix}_slot_query_hotfix_score"
+    },
+    "scripts": {
+      "build": "exact_match.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "slot_stub": {
+    "priority": 0,
+    "common": "${common}",
+    "use_extended_lu_schema": false,
+    "type": "slot",
+    "qas_inputs": {
+      "slot_score": "${slot_exactly_match.qas_outputs.override_score}",
+      "preprocessed_query": "${preprocess.qas_outputs.preprocessed_query}",
+      "preprocess_intertoken": "${preprocess.qas_outputs.preprocessed_intertoken}"
+    },
+    "scripts": {
+      "build": "qas_processor.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "timex_preprocessor": {
+    "priority": 0,
+    "common": "${common}",
+    "use_extended_lu_schema": false,
+    "timex_grammar_file": "${timex_grammar_file}",
+    "datetime_slot_file": "${timex_datetime_slot_file}",
+    "timex_tag_processor": {
+      "input": "",
+      "output": "",
+      "process_entire_query": true,
+      "combine_consecutive_tokens_with_same_tags": true,
+      "use_inference": false,
+      "temporal_normalization_type": "Future",
+      "week_day_logic_type": "WeekBoundary",
+      "process_more_tag_features_than_tokens": false
+    },
+    "qas_inputs": {
+      "preprocessed_query": "${preprocess.qas_outputs.timex_preprocessed_query}",
+      "slot_score": "${slot_stub.qas_inputs.slot_score}",
+      "reference_time": "ClientContext_ReferenceTime"
+    },
+    "qas_outputs": {
+      "timex_result": "Timex3"
+    },
+    "scripts": {
+      "build": "timex_process.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "canonical_processor": {
+    "common": "${common}",
+    "canonical_file": "${canonical_value_file}",
+    "scripts": {
+      "build": "canonical_process.exe -c %processor_config% -t %tmp% -o %final%"
+    }
+  },
+
+  "post": {
+    "scripts": {
+      "build": "qas_merge.exe -c %build_config% -o %final%",
+      "test": "cd"
+    }
+  }
+}
