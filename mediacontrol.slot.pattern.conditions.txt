@@ -1,0 +1,1 @@
+luna_mediacontrol_enus_MV1.slots.pattern.bin		False
